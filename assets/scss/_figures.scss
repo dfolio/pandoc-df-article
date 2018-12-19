@@ -1,0 +1,84 @@
+img, .mediaobject {
+  padding: 0;
+  @include img-fluid;
+  max-width: 100%!important;
+  height: auto;
+  text-align: center;
+  margin: 0 auto;
+}
+svg { font-family: $font-family-sans-serif; }
+
+figure,
+.figure, .figure p,
+table, .table,
+.figure-contents,
+.subfigures,.subfigures p{
+  justify-content: center;
+  max-width:100%!important;
+  margin: 0 auto;
+  text-align: center !important;
+}
+
+figure, .figure, .subfigures,
+.table {
+  //display: block;
+  // Ensures the caption's text aligns with the image.
+  display: inline-block;
+  width: 100%;
+  padding: $spacer/4;
+  @include border-radius($figure-border-radius);
+  @include box-shadow($figure-box-shadow);
+  margin-bottom: $spacer;
+}
+
+figure img,
+.figure img,
+.figure-contents img,
+.subfigures img {
+  display: inline-block;
+}
+
+.subfigures  {
+  img+img,
+  .spacer+img{
+    margin-left: $spacer;
+  }
+}
+
+figcaption, .figcaption,
+caption, .caption,
+.figure-title,
+.example-title,
+.equation-title{
+  display: block;
+  text-align: justify;
+  margin: auto 1em;
+
+  font-size: $figure-caption-font-size;
+  font-weight: normal;
+  color: $figure-caption-color;
+}
+
+table {
+  width: 99%;
+}
+
+table caption, .table-title{
+  display: table-caption;
+  caption-side: top;
+}
+
+table tr {
+  padding: 0;
+  margin: 0;
+  background-color: #f0f0f0;
+}
+
+table tr.even {
+  background-color: #fafafa;
+}
+
+table td {
+  margin: 0;
+  padding: 3px 5px;
+}

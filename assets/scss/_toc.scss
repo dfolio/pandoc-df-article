@@ -1,0 +1,56 @@
+
+.sidebar-toc{
+  @include clearfix;
+  @supports (position: sticky) {
+    position: sticky;
+    top: 1rem;
+    float: right;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+}
+.article-toc{
+  color: $toc-color;
+  background-color: $toc-bg;
+  border: 1px solid $toc-border;
+  @include border-radius($toc-border-radius);
+  @include box-shadow(0 .25rem .5rem rgba($toc-border, .5));
+  font-size: $font-size-footnote;
+  width: 100%;
+
+  .toc-title{
+    display: block;
+    color: $toc-bg;
+    background:  $toc-color;
+    font-weight: $font-weight-bold;
+  }
+  ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  a{
+    display: block;
+    padding: 0 $spacer/4;
+    color: inherit;
+    @include transition($link-transition);
+
+    @include hover-focus-active{
+      color: $accent;
+      background: rgba(lighten($toc-border,40%),.6);
+    }
+  }
+  li ul > li a{
+    padding-left:  $spacer/2;
+    font-size: 90%;
+    font-weight: normal;
+  }
+  li ul li ul> li a{
+    padding-left:  $spacer;
+  }
+  .active{
+    color: $accent;
+    background: rgba(lighten($toc-border,40%),.6);
+  }
+}

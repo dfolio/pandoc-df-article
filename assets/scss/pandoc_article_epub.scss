@@ -1,0 +1,58 @@
+@charset "utf-8";
+@at-root {
+  @-ms-viewport { width: device-width; } // stylelint-disable-line at-rule-no-vendor-prefix
+}
+
+@import "variables";
+//@import "bootstrap/scss/functions";//already loaded in variables
+//@import "bootstrap/scss/variables";//already loaded in variables
+//bootstrap mixins
+@import "bootstrap/scss/mixins";
+
+// Optional
+@import "bootstrap/scss/reboot";
+@import "bootstrap/scss/type";
+@import "bootstrap/scss/images";
+@import "bootstrap/scss/code";
+@import "bootstrap/scss/grid";
+
+
+//@import "bootstrap/scss/buttons";
+@import "bootstrap/scss/card";
+@import "bootstrap/scss/utilities/display";
+@import "bootstrap/scss/utilities/flex";
+@import "bootstrap/scss/utilities/spacing";
+
+//local styles
+@import "article";
+
+//epub specific
+header p {text-align:center;}
+/*  Disable hyphenation for headings to avoid single-syllable-lines.*/
+h1,h2 {
+  -epub-hyphens: none;
+-webkit-hyphens: none;
+   -moz-hyphens: none;
+        hyphens: none;
+}
+/*  Shortcodes for page-break rules.
+    Use data attributes to designate if and how the page should be broken before, inside or after an element.
+*/
+h1, h2, h3, h4, h5, h6,
+table, img, figure, video,
+[data-page-break~=inside][data-page-break~=avoid] { page-break-inside:  avoid; }
+[data-page-break~=after]                          { page-break-after:  always; }
+h1, h2, h3, h4, h5, h6,
+[data-page-break~=after][data-page-break~=avoid]  { page-break-after:   avoid; }
+[data-page-break~=before]                         { page-break-before: always; }
+[data-page-break~=before][data-page-break~=avoid] { page-break-before:  avoid; }
+img[data-page-break~=before]                      { page-break-before:   left; }
+/*  Turn on hyphenation for paragraphs and captions only. */
+p, figcaption, blockquote {
+  overflow-wrap: break-word;
+  -epub-hyphens: auto;
+-webkit-hyphens: auto;
+   -moz-hyphens: auto;
+        hyphens: auto;
+     text-align: justify;
+}
