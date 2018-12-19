@@ -2,8 +2,9 @@
 
 TARGET=${1:-'html'}
 shift
-WATCHED=${*:-'_md/ _sass/ assets/'}
+WATCHED=${*:-'_md/  assets/'}
 INOT_OPTS="-rq"
+TIMER='/usr/bin/time -f "Elapsed Time = %E"'
 
 trap ctrl_c INT
 function ctrl_c() {
@@ -18,8 +19,8 @@ function msg() {
 while file=$(inotifywait -rq -e delete -e create -e modify -e move --exclude '/\..+' --format %f $WATCHED); do
   msg "Detected change for: '$file'\n"
   case "$file" in
-    *.md | *.scss | *.svg | *.png )
-    make $TARGET
+    *.md | *.scss | *.svg | *.png | *.pp )
+    /usr/bin/time -f "Elapsed Time = %E" make $TARGET
     ;;
     *)
      msg "ignore $file\n"

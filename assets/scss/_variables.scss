@@ -6,96 +6,83 @@
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
 
-$enable-rounded:            true;
-$enable-shadows:            true;
-$enable-gradients:          true;
-$enable-transitions:        true;
-$enable-hover-media-query:  false;// Deprecated, no longer affects any compiled CSS
-$enable-grid-classes:       true;
-$enable-print-styles:       false;
+$enable-rounded: true;
+$enable-shadows: true;
+$enable-gradients: true;
+$enable-transitions: true;
+
+//$enable-hover-media-query:  false;// Deprecated, no longer affects any compiled CSS
+$enable-grid-classes: true;
+$enable-print-styles: true;
 
 // Fonts
-$font-family-serif:           "TeX Gyre Termes",Times, "Latin Modern Roman","Computer Modern", serif;
-$font-family-base:            $font-family-serif;
-$font-size-sc:                0.85;
-$font-size-small:             $font-size-sm;
-$font-size-foot:         max(($font-size-base * $font-size-sc),0.751rem);
-$font-size-footnote:     max(($font-size-base * .86),0.751rem);
-$font-weight-light:           200 !default;
-$font-weight-bold:            700 !default;
+$font-family-serif: "TeX Gyre Termes", Times, "Latin Modern Roman", "Computer Modern", serif;
+$font-family-base: $font-family-serif;
+$font-size-sc: 0.85;
+$font-size-small: $font-size-sm;
+$font-size-foot: max($font-size-base * $font-size-sc, 0.751rem);
+$font-size-footnote: max($font-size-base * 0.86, 0.751rem);
+$font-weight-light: 200 !default;
+$font-weight-bold: 700 !default;
 
 // Color system
-$BlueDark:    rgba(#455a64, 1);
-$BlueLight:   rgba(#607d8b, 1);
-$PastelGray:  rgba(#ccc, 1);
-$Coquelicot:  rgba(#f30, 1);
-$TurquoiseLight:    rgba(#c2ebef, 1);
-$CyanLight:   rgba(#cff, 1);
-$CyanDark:    rgba(#3ff, 1);
+$BlueDark: rgba(#455a64, 1);
+$BlueLight: rgba(#607d8b, 1);
+$PastelGray: rgba(#ccc, 1);
+$Coquelicot: rgba(#f30, 1);
+$TurquoiseLight: rgba(#c2ebef, 1);
+$CyanLight: rgba(#cff, 1);
+$CyanDark: rgba(#3ff, 1);
+
 //$Canary:      rgba(#ff9, 1);
+$accent: $Coquelicot;
 
-$Dark:        rgba(adjust-hue(darken(#292b2c, 10%), 25deg), 1);
-$Light:       rgba(adjust-hue(darken(#eceeef, 10%), 25deg), 0.8);
-
-$primary:       rgba(#607d8b,1);
-$primary-dark:  $BlueDark;
-$primary-light: $Light;
-$secondary:     $TurquoiseLight;
-$accent:        $Coquelicot; // accentuation & active
-$success:       $green !default;
-$info:          $CyanDark;
-$warning:       $yellow !default;
-$disclaimer:    $orange !default;
-$danger:        $Coquelicot;
-$light:         $Light;
-$dark:          $Dark;
+$Dark: rgba(adjust-hue(darken(#292b2c, 10%), 25deg), 1);
+$Light: rgba(adjust-hue(darken(#eceeef, 10%), 25deg), 0.8);
 
 // Body
-$text-color:           $body-color ;
-$brand-color:          $primary ;
-$thesis-dark:          $Dark !default;
-$thesis-info:          $info !default;
-$thesis-disclaimer:    $disclaimer!default;
-$thesis-warning:       $warning !default;
-$thesis-danger:        $danger !default;
+$body-bg: $white;
+$text-color: $body-color;
 
-$thesis-banner-bg:     rgba($primary-dark, 0.9);
-$thesis-banner-fg:     rgba(white,0.9);
-$thesis-banner-active: rgba($accent,0.8);
+// Links
+// Style anchor elements.
+$link-color: theme-color("primary");
+$link-decoration: none;
+$link-hover-color: darken($link-color, 40%);
+$link-hover-color-accent: $accent;
+$link-hover-decoration: underline;
+$link-transition: color 0.5s;
 
-$breadcrumb-bg:                     rgba($secondary,0.4);
-$breadcrumb-divider-color:          rgba($Dark,0.8);
-$breadcrumb-active-color:           rgba($accent,0.8);
+//header
+//authors
+$authors-bg: rgba(lighten($Light, 40%), 0.2);
+$item-author-padding-x: $spacer / 2;
+$item-author-padding-y: $spacer / 4;
 
-// Jumbotron - pagetitle
-$pagetitle-padding:                 2rem !default;
-$pagetitle-bg:                      $thesis-banner-bg;
-$pagetitle-fg:                      $thesis-banner-fg;
-$font-size-toc:                max(($font-size-base * .85),0.751rem);
-$spacer-toc:                        .5rem;
+//summary:
+$summary-bg: rgba(lighten($BlueLight, 20%), 0.2);
 
-// Spacing
-$spacer:                      2rem;
-$spacing-unit: $spacer;
-$grid-gutter-width:           1rem !default;
-$nav-sticky-top:              6rem;
+//toc:
+$nav-link-padding-y: 0.25rem;
+$nav-link-padding-x: $navbar-nav-link-padding-x;
+$nav-link-color: $primary;
+$nav-link-active-color: $accent;
+$nav-link-disabled-color: lighten($nav-link-color, 20%);
+ 
+$toc-color: $Dark;
+$toc-bg: rgba(darken($body-bg, 5%), 0.8);
+$toc-border: $toc-color;
+$toc-border-radius: $border-radius;
 
-//
-$blockquote-font-size:        ($font-size-base * 0.95) !default;
+//figures
+$figure-caption-font-size: 90% !default;
+$figure-caption-color: $gray-800;
+$figure-border-radius: $border-radius;
+$figure-box-shadow: 0 1px 2px rgba($black, 0.25);
 
-// Cards
-$card-spacer-y:                     .75rem !default;
-$card-spacer-x:                     1.25rem !default;
-$card-border-width:                 $border-width !default;
-$card-border-radius:                $border-radius !default;
-$card-border-color:                 rgba($black, .125) !default;
-$card-inner-border-radius:          calc(#{$card-border-radius} - #{$card-border-width}) !default;
-$card-cap-bg:                       rgba($black, .03) !default;
-$card-bg:                           $light !default;
-$card-img-overlay-padding:          1.25rem !default;
-$card-group-margin:                 ($grid-gutter-width / 2) !default;
-$card-deck-margin:                  $card-group-margin !default;
-
-$card-columns-count:                3 !default;
-$card-columns-gap:                  1.25rem !default;
-$card-columns-margin:               $card-spacer-y !default;
+$thumbnail-padding: 0.25rem !default;
+$thumbnail-bg: $body-bg !default;
+$thumbnail-border-width: $border-width !default;
+$thumbnail-border-color: $gray-300 !default;
+$thumbnail-border-radius: $border-radius !default;
+$thumbnail-box-shadow: 0 1px 2px rgba($black, 0.075) !default;

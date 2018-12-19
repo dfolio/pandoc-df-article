@@ -7,7 +7,7 @@ link-citations: true
 ## pandoc-crossref metadata
 linkReferences: true
 cref: true
-chapters: True
+chapters: false
 chaptersDepth: 1
 sectionsDepth: 3
 numberSections: True
@@ -20,6 +20,7 @@ figureTitle: 'Figure'
 figPrefix:
   - 'Figure'
   - 'Figures'
+ccsLabelSep: ')&nbsp;'
 tblLabels: arabic
 tblPrefix:
   - 'Table'

@@ -5,7 +5,7 @@ A set of macros for pandoc HTML output
 --------------------------------------------------------------------------------
 (c) 2017, David FOLIO CC-By-4.0 License.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!macrochars(\!)
+!macrochars(!\)
 \define{HTML}
 \define{xspace}{ }
 !comment( *** references pp-macros set *************************************** )
@@ -17,30 +17,31 @@ A set of macros for pandoc HTML output
 !comment( *** bibliography pp-macros set ************************************* )
 \define{doi}{DOI link}{[doi:\1](http://doi.org/\1){.doi}}
 !comment( *** block pp-macros set ******************************************** )
-\define{SkipAndBreak}{vertical skip with pagebreak}{<div class="SkipAndBreak" data-skip="\1"></div>}
-\define{footnoterule}{<hr class="footnoterule">}
 
 !comment( *** inline pp-macros set ******************************************* )
-\define{emph}{<span class="em">*\1*</span>}
-\define{enquote}{<span class="enquote">&ldquo;\emph{\1}&rdquo;</span>}
-\define{uline}{<span class="uline underline">\1</span>}
-\define{Latin}{<span lang="la" class="latin">\1</span>}
-\define{French}{<span lang="fr" class="french" custom-style="French">\1</span>}
-\define{German}{<span lang="de" class="german">\1</span>}
 
-\define{AbbrEn}{<abbr lang="en" title="\1">\2</abbr>}
-\define{AbbrFr}{<abbr lang="fr" title="\1">\2</abbr>}
 
 !comment( *** unit pp-macros set ******************************************** )
 \define{num}{Latex siunitx}{<span class="number">\1</span>}
 \define{si}{Latex siunitx}{<span class="unit">\1</span>}
-\define{SI}{Latex siunitx}{<span class="number">\1</span><span class="unit">\2</span>}
+\define{SI}{Latex siunitx}{\num{\1}\si{\2}}
 \define{cubic}{\1^3^}
 \define{per}{/}
-\define{kilo}{k}
-\define{micro}{µ}
+\define{ampere}{A}
+\define{deg}{°}
 \define{gram}{g}
+\define{hour}{h}
+\define{joule}{J}
+\define{kilo}{k}
+\define{kelvin}{K}
+\define{metre}{m}
+\define{micro}{µ}
+\define{nano}{µ}
+\define{second}{s}
+\define{tesla}{T}
 \define{year}{year}
 \define{years}{years}
-\define{hour}{h}
-\define{metre}{m}
+
+
+!comment( *** math pp-macros set ******************************************** )
+

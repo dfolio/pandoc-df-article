@@ -1,103 +1,34 @@
 ---
 ###############################################################################
 # SIMPLE CONFIGURATION 
-draft: true
-lang: en
-title: 'The thesis title'
-subtitle: 'with this subtitle'
-subject: 'the subject or description'
-author: 'Firstname Surname'
-authors:
-  - name: 'Firstname Surname'
-    ID: AnIdentifier
-    affiliation: 'The author affiliation.'
-    email: 'Firstname.Surname@email.com'
-    url: 'dfolio.free.fr'
-institute: 'INSA Centre Val de Loire,  University of Orléans, PRISME Laboratory EA4229, Bourges, France'
-tags: ['microrobotics', 'robotics', 'modeling', 'control']
-keywords: ['microrobotics', 'robotics', 'modeling', 'control']
+#draft: true
+lang: en-US
+#title: 'Article title'
+#subtitle: ''
+#description: ''
+author-meta: 'David FOLIO'
 rights: '© 2018 D. Folio, CC-BY-4.0'
-holder:  D. Folio
-author-meta: 'D. Folio'
-abstract: |
-  This is the abstract.
-
-#
+holder: D. Folio
 # END SIMPLE CONFIGURATION
 ################################################################################
-
 ################################################################################
 # ADVANCED CONFIGURATION
-#
-
 ## Global (pandoc) variables
-toc: true
-toc-depth: 3
-lof: true
-lot: true
-
+nav-contentsname: Outline
+#toc: true
+#toc-depth: 3
+#lof: true
+#lot: true
 ## HTML template variables
-css_html:
-  - css: 'assets/css/pandoc_thesis_html.css'
-    media: 'all'
-  - css: 'assets/css/pandoc_thesis_print_html.css'
-    media: 'print'
-
-js_cdn:
-  # See https://www.srihash.org for info on how to generate the hashes
-  -
-    url:       "//code.jquery.com/jquery-3.3.1.min.js"
-    hash:      "sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-  -
-    url:       "//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
-    hash:      "sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
-  -
-    url:       "//stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    hash:      "sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-
-css_cdn:
-  -
-    url:       "//use.fontawesome.com/releases/v5.3.1/css/all.css"
-    hash:      "sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
-    #v5.0.13 "sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
-  -
-    url:       "//cdn.rawgit.com/jpswalsh/academicons/master/css/academicons.min.css"
-    #hash:      "sha384-qpNsn9fNAkiBXwcwfxPTn1Ou6UU9P6pYGWQqLRIJOlPsAKOA+8XzN2coCnVnb8Fa"
-    
+css: 'assets/css/pandoc_article_html.css'
 ## LaTeX template variables
-colorlinks: true
-verbose: true
-documentclass: book
-classoption: ['openright','twoside','pdfa']
-fontsize: 11pt
-indent: true
-mathfont: latinmodern-math.otf
-mathfontoptions:
-  - Scale=MatchUppercase
-polyglossia-otherlangs:
-  - name: french
-    options:
-  - name: german
-    options:
-  - name: latin
-    options:
+colorlinks: false
+documentclass: article
+classoption: ['twoside']
+fontsize: 10pt
 papersize: a4
-geometry: ['twoside','onecolumn','asymmetric','nomarginpar','bindingoffset=-1cm',
-  'heightrounded','includeheadfoot','hmargin=3cm','vmargin=2.5cm',
-  'headheight=16pt','headsep=0.75cm','footskip=0.8cm']
 graphics: true
 graphics-path: ['./','../','assets/fig/','assets/media/']  
-
-glossaries: 
-  - nomain
-  - acronym
-  - section
-  - nonumberlist
-  - toc 
-  - xindy
-  - numberedsection=nameref
-biblio-title: 'References'
-biblatex: true
 biblatexoptions:
   - backend=biber
   - natbib=true
@@ -106,10 +37,8 @@ biblatexoptions:
   - doi=true
   - eprint=false
   - dashed=false
-  
-natbib: false
 natbib-options: ['sort','square', 'nonamebreak','comma','numbers']
 biblio-style: 'ieee'
 biblio-dir-prefix: '../'
 version: 1.0.1
----
+...

@@ -1,11 +1,11 @@
-\PassOptionsToPackage{pdfa,unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{pdfa,unicode=true}{hyperref}% options for packages loaded elsewhere
 \PassOptionsToPackage{hyphens}{url}
 $if(colorlinks)$
 \PassOptionsToPackage{dvipsnames*,svgnames,x11names*}{xcolor}
 $endif$$if(dir)$$if(latex-dir-rtl)$
 \PassOptionsToPackage{RTLdocument}{bidi}
 $endif$$endif$%
-\documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$babel-lang$,$endif$$if(papersize)$$papersize$paper,$endif$$if(beamer)$ignorenonframetext,$if(handout)$handout,$endif$$if(aspectratio)$aspectratio=$aspectratio$,$endif$$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
+\documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$babel-lang$,$endif$$if(papersize)$$papersize$paper,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
 
 \ifx\pdfoutput\undefined\let\pdfoutput\outputmode\fi
 \newif\ifpdf\pdftrue
@@ -19,13 +19,8 @@ $endif$$endif$%
   {Sorry, \jobname must be compiled with PDF output}
 \fi
 
-\newif\ifdraft$if(draft)$\drafttrue$else$\draftfalse$endif$
-\newif\ifverbose$if(verbose)$\verbosetrue$else$\verbosefalse$endif$
-
 $if(fontfamily)$
 \usepackage[$for(fontfamilyoptions)$$fontfamilyoptions$$sep$,$endfor$]{$fontfamily$}
-$else$
-\usepackage{lmodern}
 $endif$
 $if(linestretch)$
 \usepackage{setspace}
@@ -56,7 +51,6 @@ $endif$
     \usepackage{luatexbase,luacode}
     \usepackage{luaotfload}
     \usepackage{fontspec}
-    \IfFileExists{luatexja-fontspec.sty}{\usepackage{luatexja-fontspec}}{}
   \fi
   \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Scale = 1}
@@ -73,15 +67,6 @@ $if(romanfont)$
 $endif$
 $if(sansfont)$
   \setsansfont[$for(sansfontoptions)$$sansfontoptions$$sep$,$endfor$]{$sansfont$}
-$else$
-  \setsansfont{Calibri}
-%  \setsansfont[
-%    Path=../assets/fonts/,
-%    BoldItalicFont=CALIBRIZ.TTF,
-%    BoldFont      =CALIBRIB.TTF,
-%    ItalicFont    =CALIBRII.TTF,
-%    SlantedFont   =CALIBRILI.TTF
-%  ]{calibri.otf}
 $endif$
 $if(monofont)$
   \setmonofont[Mapping=tex-ansi$if(monofontoptions)$,$for(monofontoptions)$$monofontoptions$$sep$,$endfor$$endif$]{$monofont$}
@@ -91,7 +76,7 @@ $if(mathspec)$
   \ifxetex
     \setmathfont(Digits,Latin,Greek)[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
   \else
-    \setmathfont{$mathfont$}[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]
+    \setmathfont[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
   \fi
 $else$
   \setmathfont[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
@@ -115,6 +100,8 @@ $if(CJKmainfont)$
   \fi
 $endif$
 \fi
+
+$if(pandocdefault)$%%
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 % use microtype if available
@@ -122,14 +109,28 @@ $endif$
 \usepackage[$for(microtypeoptions)$$microtypeoptions$$sep$,$endfor$]{microtype}
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
+$if(indent)$
+$else$
+\makeatletter
+\@ifundefined{KOMAClassName}{%
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% else
+  \KOMAoptions{parskip=half}}
+\makeatother
+$endif$
 $if(verbatim-in-note)$
 \usepackage{fancyvrb}
 $endif$
+$endif$
+
+$if(colorlinks)$
+\usepackage{xcolor}
+$endif$
 \hypersetup{
-  psdextra,hyperindex=true,pagebackref,
-  hypertexnames=false,
-  pdfpagelabels=true,
-  bookmarks=true,
 $if(lang)$
   pdflang={$lang$},
 $endif$
@@ -152,38 +153,57 @@ $else$
 $endif$
   breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
+
+$if(pandocdefault)$%%
 $if(verbatim-in-note)$
 \VerbatimFootnotes % allows verbatim text in footnotes
 $endif$
 $if(geometry)$
 \usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
 $endif$
-$if(lang)$
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-  \usepackage[shorthands=off,$for(babel-otherlangs)$$babel-otherlangs$,$endfor$main=$babel-lang$]{babel}
-$if(babel-newcommands)$
-  $babel-newcommands$
+$if(listings)$
+\usepackage{listings}
+\newcommand{\passthrough}[1]{#1}
 $endif$
-\else
-  \usepackage{polyglossia}
-  \setmainlanguage[$polyglossia-lang.options$]{$polyglossia-lang.name$}
-$for(polyglossia-otherlangs)$
-  \setotherlanguage[$polyglossia-otherlangs.options$]{$polyglossia-otherlangs.name$}
-$endfor$
+$if(lhs)$
+\lstnewenvironment{code}{\lstset{language=Haskell,basicstyle=\small\ttfamily}}{}
+$endif$
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+$if(links-as-notes)$
+% Make links footnotes instead of hotlinks:
+\DeclareRobustCommand{\href}[2]{#2\footnote{\url{#1}}}
+$endif$
+$if(strikeout)$
+\usepackage[normalem]{ulem}
+% avoid problems with \sout in headers with hyperref:
+\pdfstringdefDisableCommands{\renewcommand{\sout}{}}
+$endif$
+$if(numbersections)$
+\setcounter{secnumdepth}{$if(secnumdepth)$$secnumdepth$$else$5$endif$}
+$else$
+\setcounter{secnumdepth}{0}
+$endif$
+$if(subparagraph)$
+$else$
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 $endif$
-$if(biblatex)$
-\usepackage{csquotes}
-\usepackage[$if(biblio-style)$bibstyle=$biblio-style$,$endif$$for(biblatexoptions)$$biblatexoptions$$sep$,$endfor$]{biblatex}
-$for(bibliography)$
-\addbibresource{$biblio-dir-prefix$$bibliography$}
-$endfor$
-$else$
-$if(natbib)$
-\usepackage[$for(natbib-options)$$natbib-options$$sep$,$endfor$]{natbib}
-\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
+$if(pagestyle)$
+\pagestyle{$pagestyle$}
 $endif$
 $endif$
+
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
 $if(tables)$
 \usepackage{longtable,booktabs}
@@ -202,45 +222,36 @@ $if(graphics)$
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 $endif$
-$if(links-as-notes)$
-% Make links footnotes instead of hotlinks:
-\renewcommand{\href}[2]{#2\footnote{\url{#1}}}
-$endif$
-$if(indent)$
-$else$
-\IfFileExists{parskip.sty}{%
-\usepackage{parskip}
-}{% else
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
-}
-$endif$
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
 
-$if(numbersections)$
-\setcounter{secnumdepth}{$if(secnumdepth)$$secnumdepth$$else$5$endif$}
-$else$
-\setcounter{secnumdepth}{0}
+%% HEADER INCLUDES
+$for(header-includes)$
+$header-includes$
+$endfor$
+%% END HEADER INCLUDES
+
+$if(lang)$
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[shorthands=off,$for(babel-otherlangs)$$babel-otherlangs$,$endfor$main=$babel-lang$]{babel}
+$if(babel-newcommands)$
+  $babel-newcommands$
 $endif$
-$if(subparagraph)$
-$else$
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\else
+  % load polyglossia as late as possible as it *could* call bidi if RTL lang (e.g. Hebrew or Arabic)
+  \usepackage{polyglossia}
+  \setmainlanguage[$polyglossia-lang.options$]{$polyglossia-lang.name$}
+$for(polyglossia-otherlangs)$
+  \setotherlanguage[$polyglossia-otherlangs.options$]{$polyglossia-otherlangs.name$}
+$endfor$
 \fi
 $endif$
 $if(dir)$
 \ifxetex
   % load bidi as late as possible as it modifies e.g. graphicx
-  $if(latex-dir-rtl)$
-  \usepackage[RTLdocument]{bidi}
-  $else$
   \usepackage{bidi}
-  $endif$
 \fi
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \TeXXeTstate=1
@@ -252,117 +263,62 @@ $if(dir)$
 $endif$
 
 
-$if(glossary)$
-% Glossary / list of abbreviations
-%nomain,acronym,section,nonumberlist,toc,xindy
-\usepackage[$for(glossaries)$$glossaries$$sep$,$endfor$]{glossaries}
-$if(idx)$
-\makeglossaries
-$else$
-\makenoidxglossaries
+$if(natbib)$
+\usepackage[$natbiboptions$]{natbib}
+\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
 $endif$
-\glsnoexpandfields
-$endif$
-
-\IfFileExists{pandoc-df-thesis.sty}{\usepackage{pandoc-df-thesis}
-  \IfFileExists{pandoc-df-thesis-theme.sty}{\usepackage{pandoc-df-thesis-theme}}{}
-  \IfFileExists{pandoc-df-thesis-macros.sty}{\usepackage{pandoc-df-thesis-macros}}{}
-}{
-\GenericError{\jobname}{\jobname{} Error: no 'pandoc-df-thesis.sty' package}
-  {'pandoc-df-thesis.sty' base package must be present to compile \jobname{} }
-  {Sorry, 'pandoc-df-thesis.sty' package must be available in your TEXMF PATH to compile \jobname.}
-}
-$for(header-includes)$
-$header-includes$
+$if(biblatex)$
+\usepackage[$if(biblio-style)$style=$biblio-style$,$endif$$for(biblatexoptions)$$biblatexoptions$$sep$,$endfor$]{biblatex}
+$for(bibliography)$
+\addbibresource{$bibliography$}
 $endfor$
+$endif$
 \makeatletter
-$if(glossary)$
-\input{$glossary$}
-$endif$
-
+\providecommand{\keywords}[1]{
+\providecommand{\and}{;}
+#1}
 \makeatother
-
 $if(title)$
-\title$if(title-meta)$[$title-meta$]$endif${$title$$if(thanks)$\thanks{$thanks$}$endif$}
-$endif$
-$if(subtitle)$
-\subtitle{$subtitle$}
-$endif$
-$if(subject)$
-\subject{$subject$}
-$endif$
-$if(keywords)$
-\keywords$if(keywords)$[$for(keywords)$$keywords$$sep$, $endfor$]$endif${$for(keywords)$$keywords$$sep$ \and $endfor$}
+\title{$title$$if(thanks)$\thanks{$thanks$}$endif$}
 $endif$
 
 $if(authors)$
-\author$if(author-meta)$[$author-meta$]$endif${$for(authors)$$if(authors.name)$$authors.name$$else$$authors$$endif$$sep$ \and $endfor$}
+\author{$for(authors)$$if(authors.name)$$authors.name$$else$$authors$$endif$$sep$ \and $endfor$}
 $else$
 $if(author)$
-\author$if(author-meta)$[$author-meta$]$endif${$for(author)$$if(author.name)$$author.name$$else$$author$$endif$$sep$ \and $endfor$} %$if(author.affiliation)$\thanks{$author.affiliation$}$endif$
+\author{$for(author)$$if(author.name)$$author.name$$else$$author$$endif$$sep$ \and $endfor$} %$if(author.affiliation)$\thanks{$author.affiliation$}$endif$
 $endif$
 $endif$
-$if(institute)$
-\institute{$for(institute)$$institute$$sep$ \and $endfor$}
-$endif$
-$if(copyright)$
-\copyright{$copyright$}
-$endif$
-\date{$date$}
 
 \begin{document}
 $if(title)$
 \maketitle
 $endif$
 
-% ------------------------------------------------------------------------------
-% FRONTMATER -------------------------------------------------------------------
-\frontmatter
+$if(abstract)$
+% TODO: Support for abstract...
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+$if(keywords)$
+\keywords{$for(keywords)$$keywords$$sep$ \and $endfor$}
+$endif$
+
 $for(include-before)$
 $include-before$
 $endfor$
-$for(frontmatter)$
-\include{$frontmatter$}
-$endfor$
 
-$if(toc)$
-{
-$if(colorlinks)$
-\hypersetup{linkcolor=$if(toccolor)$$toccolor$$else$black$endif$}
-$endif$
-\setcounter{tocdepth}{$toc-depth$}
-\tableofcontents
-}
-$endif$
-$if(lot)$
-\listoftables
-$endif$
-$if(lof)$
-\listoffigures
-$endif$
-
-\clearemptydoublepage
-$if(glossary)$
-% GLOSSARIES -------------------------------------------------------------------
-\Glossaries
-$endif$
-
-% ------------------------------------------------------------------------------
-% MAINMATER --------------------------------------------------------------------
-\mainmatter
 
 % BODY -------------------------------------------------------------------------
 
 $body$
 
-\clearemptydoublepage
-% ------------------------------------------------------------------------------
-% BACKMATTER--------------------------------------------------------------------
-\backmatter
 
-$if(biblatex)$
-\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
-$else$
+% END BODY ---------------------------------------------------------------------
+
+
+
 $if(natbib)$
 $if(bibliography)$
 $if(biblio-title)$
@@ -372,29 +328,15 @@ $else$
 \renewcommand\refname{$biblio-title$}
 $endif$
 $endif$
-\bibliography{$for(bibliography)$$biblio-dir-prefix$$bibliography$$sep$,$endfor$}
+\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
 $endif$
 $endif$
+$if(biblatex)$
+\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
 $endif$
 
 $for(include-after)$
 $include-after$
 $endfor$
-
-$for(backmatter)$
-\include{$backmatter$}
-$endfor$
-
-
-% END OF DISSERTATION
-\clearemptydoublepage
-
-$if(abstract)$
-% TODO: Support for abstract...
-%\begin{abstract}
-%$abstract$
-%\end{abstract}
-$endif$
-\hbox{}\pagestyle{empty}
 
 \end{document}

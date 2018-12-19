@@ -25,25 +25,25 @@ $for(header-includes)$
   $header-includes$
 $endfor$
 </head>
-<body$if(coverpage)$ id="cover"$endif$ class="container-fluid">
+<body$if(coverpage)$ id="cover"$endif$ class="container-fluid" $if(body-type)$ epub:type="$body-type$"$endif$>
 $if(titlepage)$
-<section epub:type="titlepage" class="thesis-header">
+<section epub:type="titlepage" class="article-header">
 $for(title)$
 $if(title.type)$
-  <h1 class="$title.type$">$title.text$</h1>
+  <h1 class="article-title $title.type$">$title.text$</h1>
 $else$
-  <h1 class="title">$title$</h1>
+  <h1 class="title article-title">$title$</h1>
 $endif$
 $endfor$
 $if(subtitle)$
   <p class="subtitle">$subtitle$</p>
 $endif$
-$for(author)$
-  <p class="author">
-  $if(author.name)$<span class="name">$author.name$</span>
-    $if(author.affiliation)$<span class="affiliation">$author.affiliation$</span>$endif$  
+$for(authors)$
+  <p class="article-authors">
+  $if(authors.name)$<span class="name fn author-name">$authors.name$</span>
+    $if(authors.affiliation)$<span class="affiliation author-affiliation">$authors.affiliation$</span>$endif$
   $else$
-      $author$
+      $authors$
   $endif$
   </p>
 $endfor$
