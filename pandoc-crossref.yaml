@@ -1,0 +1,4 @@
+eqnPrefix: [Eq., Eqns.]
+figureTemplate: "[[$$figureTitle$$&nbsp;$$i$$$$titleDelim$$]{.figlabel}  $$t$$]{.figcaption}"
+subfigureTemplate: "[[$$figureTitle$$&nbsp;$$i$$$$titleDelim$$]{.figlabel} $$t$$: $$ccs$$]{.figcaption}"
+secLabels: "roman"
