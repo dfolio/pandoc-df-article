@@ -1,0 +1,21 @@
+autoSectionLabels: false
+chapters: false
+chaptersDepth: 0
+codeBlockCaptions: false
+cref: true
+ccsLabelSep: ')&nbsp;'
+eqnPrefix: [Eq., Eqns.]
+figPrefix: [Fig., Figs.]
+figureTemplate: "[[$$figureTitle$$&nbsp;$$i$$$$titleDelim$$]{.figlabel}  $$t$$]{.figcaption}"
+figureTitle: Fig.
+linkReferences: true
+listings: false
+secHeaderDelim: '. '
+secLabels: roman
+secPrefix:
+- 'Section'
+- 'Sections'
+sectionsDepth: -1
+subfigureTemplate: "[[$$figureTitle$$&nbsp;$$i$$$$titleDelim$$]{.figlabel} $$t$$]{.figcaption}"
+subfigureChildTemplate: "($$i$$)"
+numberSections: true
