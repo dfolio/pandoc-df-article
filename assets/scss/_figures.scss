@@ -6,6 +6,9 @@ img, .mediaobject {
   text-align: center;
   margin: 0 auto;
 }
+img::after {
+  content: attr(alt);
+}
 svg { font-family: $font-family-sans-serif; }
 
 figure,
@@ -29,6 +32,9 @@ figure, .figure, .subfigures,
   @include border-radius($figure-border-radius);
   @include box-shadow($figure-box-shadow);
   margin-bottom: $spacer;
+  p{
+    display: flex;
+  }
 }
 
 figure img,

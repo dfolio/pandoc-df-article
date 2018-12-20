@@ -1,6 +1,6 @@
 ---
 ###############################################################################
-# SIMPLE CONFIGURATION 
+# SIMPLE CONFIGURATION
 #draft: true
 lang: en-US
 #title: 'Article title'
@@ -22,13 +22,14 @@ nav-contentsname: Outline
 ## HTML template variables
 css: 'assets/css/pandoc_article_html.css'
 ## LaTeX template variables
+pandoc-df-article: true
 colorlinks: false
 documentclass: article
 classoption: ['twoside']
 fontsize: 10pt
 papersize: a4
 graphics: true
-graphics-path: ['./','../','assets/fig/','assets/media/']  
+graphics-path: ['./','../','assets/fig/','assets/media/']
 biblatexoptions:
   - backend=biber
   - natbib=true

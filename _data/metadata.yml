@@ -4,25 +4,7 @@
 lang: en-US
 ## pandoc-citeproc metadata
 link-citations: true
-## pandoc-crossref metadata
-linkReferences: true
-cref: true
-chapters: false
-chaptersDepth: 1
-sectionsDepth: 3
-numberSections: True
-secPrefix:
-  - 'Section'
-  - 'Sections'
+## pandoc-crossref metadata: now in pandoc-crossref
 autoSectionLabels: true
-codeBlockCaptions: false
-figureTitle: 'Figure'
-figPrefix:
-  - 'Figure'
-  - 'Figures'
-ccsLabelSep: ')&nbsp;'
-tblLabels: arabic
-tblPrefix:
-  - 'Table'
-  - 'Tables'
+linkReferences: true
 ...

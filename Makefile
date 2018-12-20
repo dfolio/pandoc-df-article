@@ -18,8 +18,8 @@
 #BUILD_OUTPUT_MODE   ?= single
 
 #Select the prefered build strategy
-#BUILD_TEX_STRATEGY  ?= pdflatex
-BUILD_TEX_STRATEGY  ?= lualatex
+BUILD_TEX_STRATEGY  ?= pdflatex
+#BUILD_TEX_STRATEGY  ?= lualatex
 #BUILD_TEX_STRATEGY  ?= xelatex
 
 # Select the citation TEX_BIB_STRATEGY for LateX:
@@ -27,8 +27,8 @@ BUILD_TEX_STRATEGY  ?= lualatex
 #     Note: by default in VARSDATA biber backend are used.
 #     See also the BUILD_BIB_STRATEGY below.
 #   - natbib: intended for use in producing a LaTeX file that can be processed with bibtex.
-TEX_BIB_STRATEGY  ?= biblatex
-#TEX_BIB_STRATEGY  ?= natbib
+#TEX_BIB_STRATEGY  ?= biblatex
+TEX_BIB_STRATEGY  ?= natbib
 
 # Select the default targets
 # Values any of:  pdf, html, epub, odt, docx, xml/DocBook
@@ -169,6 +169,7 @@ export LC_ALL := C
 METADATA    ?=$(DATADIR)/metadata.yml
 ## Edit the VARSDATA to customize pandoc
 VARSDATA    ?=$(DATADIR)/variables.yml
+PANDOC_CROSSREF_DATA ?=$(DATADIR)/pandoc-crossref.yml
 ## Put here all the necessary bibliography files
 #BIBFILES    ?=$(BIBDIR)/string.bib $(BIBDIR)/thesis-biblio.bib
 ## Where all bibliographies are merged
@@ -322,16 +323,16 @@ endif
 
 USE_CROSSREF=$(call have-cmd,$(PCROSSREF))
 ifeq ($(USE_CROSSREF),:)
-PANDOC_CROSSREF_FLAGS  ?= --filter pandoc-crossref
+PANDOC_CROSSREF_FLAGS  ?= --filter pandoc-crossref -M "crossrefYaml=$(PANDOC_CROSSREF_DATA)"
 endif
-
+#
 
 ## Pandoc options for Mardown/HTML generations
 PANDOC_MDH_FLAGS  ?=--file-scope
 
 PANDOC_MDH_BASE  ?= --standalone \
   $(PANDOC_MDH_FLAGS) \
-  $(PANDOC_CROSSREF_FLAGS) \
+	$(PANDOC_CROSSREF_FLAGS) \
   $(PANDOC_CITEPROC_FLAGS)
 ## Options for HTML output
 ## Note: CSS files must be defined in VARSDATA file not here
@@ -363,15 +364,10 @@ PANDOC_odt_FLAGS  ?= $(PANDOC_MDH_BASE)\
   --reference-doc=$(TEMPLATEDIR)/template.odt \
   --default-image-extension=png
 
-## Pandoc options for Mardown/LaTeX generations
-PANDOC_MDT_FLAGS  ?= -M numberSections=false \
-  $(PANDOC_CROSSREF_FLAGS)  \
-  $(PANDOC_latex_BIB) --default-image-extension=pdf
 
 ## Pandoc Tex/Bibliography options
 PANDOC_latex_BIB_FLAGS  ?= --file-scope \
-  $(foreach f,$(BIBFILES), --bibliography='$f')
-
+	$(foreach f,$(BIBFILES), --bibliography='$f')
 ifeq "$(strip $(TEX_BIB_STRATEGY))" "biblatex"
 PANDOC_latex_BIB_FLAGS  += --biblatex
 endif
@@ -379,11 +375,17 @@ ifeq "$(strip $(TEX_BIB_STRATEGY))" "natbib"
 PANDOC_latex_BIB_FLAGS  += --natbib
 endif
 
+## Pandoc options for Mardown/LaTeX generations
+PANDOC_MDT_FLAGS  ?= -M numberSections=false \
+  --default-image-extension=pdf
+
 ## Options for LaTeX output
 PANDOC_latex_FLAGS  ?= --file-scope -standalone\
   --pdf-engine=$(BUILD_TEX_STRATEGY) \
+  $(PANDOC_CROSSREF_FLAGS) \
   $(PANDOC_latex_BIB_FLAGS) \
-  -M numberSections=false --number-sections\
+  -M numberSections=false \
+  -M link-citations=false \
   --default-image-extension=pdf \
   --template=$(TEMPLATEDIR)/template.latex
 
@@ -416,12 +418,12 @@ else
 VERBOSE     ?= 1
 endif
 ifdef VERBOSE
-TEXFLAGS    += -interaction=nonstopmode
+#TEXFLAGS    += -interaction=nonstopmode
 PANDOC_FLAGS+= --verbose
 RSYNC_FLAGS += --verbose -h --progress
 WRITE_LOG   ?= 1
 else
-TEXFLAGS    += -interaction=batchmode -file-line-error
+#TEXFLAGS    += -interaction=batchmode -file-line-error
 BIBTEX      += -terse
 PANDOC_FLAGS+= --quiet
 SASS_FLAGS  += --quiet
@@ -584,10 +586,10 @@ echo-success  = $(echo_dt) "$(green)$(bold)$1$(reset)"
 echo-failure  = $(echo_dt) "$(red)$(bold)$1$(reset)"
 
 
-# $(call echo-build,<target>,[<run number>])
-echo-build    = $(echo_dt) "\t$(blue)$(bold)==Build==$(reset)$(blue)\t$1$(if $2, ($2),)...$(reset)"
+# $(call echo-build,<type>,<target>,[<run number>])
+echo-build    = $(echo_dt) "\t$(blue)$(bold)==Build==$(reset)$(blue)\t$1$(if $2, $2,)$(if $3, ($3),)...$(reset)"
 # $(call echo-run,<prog>,<arg>)
-echo-run      = $(echo_dt) "\t$(cyan)>>$(bold)Run $1$(reset)$(cyan)$(if $3, $3-->,)$(if $2,$2,...)$(reset)"
+echo-run      = $(echo_dt) "\t$(cyan)>>$(bold)Run $1$(reset)$(cyan)$(if $3,  $3-->, on )$(if $2, $2,...)$(reset)"
 # $(call echo-copy,src,dest)
 echo-copy     = $(echo_dt) "\t$(cyan)>>Copy $1$(if $2,\t$2 $(if $3,--> $3,),)...$(reset)"
 # $(call echo-copy,src,dest)
@@ -632,15 +634,11 @@ define output-all-programs
 endef
 
 WRITE_LOG ?=
-# Log command to a log file
-# $(call output-to-log,log)
-define output-to-log
-$(if $(WRITE_LOG),>> $1,>/dev/null)
-endef
-
-TEXLOG    ?=$(LOGDIR)//build.log
-get-pandoc-log =$(if $(WRITE_LOG),--log=$(LOGDIR)/pandoc_$1.log)
-
+# Helper to get pandoc log
+get-pandoc-log =$(if $(WRITE_LOG),--log=$(ROOTDIR)/$(LOGDIR)/pandoc_$1.log)
+ifdef WRITE_LOG
+clean_log += $(wildcard $(ROOTDIR)/$(LOGDIR)/pandoc_*.log)
+endif
 
 # Pandoc invocation
 #$(call run-pandoc-from-md,<file_from>,<file_to>,<dialect>)
@@ -658,6 +656,17 @@ $(PP) $(PP_FLAGS) -D$(3) -import=$(PP_MACROS) $1 | \
 endef
 
 
+# Log command to a log file
+# $(call output-to-log,log)
+define output-to-log
+$(if $(WRITE_LOG),>> $1,>/dev/null)
+endef
+
+TEXLOG    ?=$(ROOTDIR)/$(LOGDIR)/build_tex.log
+ifdef WRITE_LOG
+clean_log += $(TEXLOG)
+endif
+
 # LaTeX invocations
 #
 # Note that we use
@@ -670,9 +679,9 @@ endef
 # $(call run-latex,<tex file stem, e.g., $*>,[extra LaTeX args])
 define run-latex
 $(call echo-run,$(latex_build_program),$1); \
-$(latex_build_program) -jobname='$(notdir $1)'\
+$(latex_build_program) $(TEXFLAGS) -jobname='$(notdir $1)'\
   -interaction=batchmode -file-line-error \
-  $(LATEX_OPTS) $(if $2,$2,) $1 $(call output-to-log,$(TEXLOG))
+  $(if $2,$2,) $1 $(call output-to-log,$(TEXLOG))
 endef
 # -output-directory='$(TEXDIR)'
 
@@ -851,33 +860,36 @@ $(SED) \
 -e 'd'
 
 # BibTeX invocations
-# $(call run-bibtex,<tex >)
+# $(call run-bibtex,<tex >)# by default "bibtex"
+run-bibtex  = $(call echo-run,$(BIBTEX),$1); $(BIBTEX) $1 | $(color_bib)
+
 ifeq "$(strip $(TEX_BIB_STRATEGY))" "natbib"
 BUILD_BIB_STRATEGY  := bibtex
-ifeq "$(strip $(BUILD_BIB_STRATEGY))" "" # by default "bibtex"
-run-bibtex  = $(call echo-run,$(BIBTEX),$1); $(BIBTEX) $1 | $(color_bib)
-endif
 endif
 
 ifeq "$(strip $(BUILD_BIB_STRATEGY))" "biber"
 run-bibtex  =  $(call echo-run,$(BIBER),$1); $(BIBER) $1 | $(color_bib)
 endif
-ifeq "$(strip $(BUILD_BIB_STRATEGY))" "" # by default "bibtex"
-run-bibtex  = $(call echo-run,$(BIBTEX),$1); $(BIBTEX) $1 | $(color_bib)
-endif
-# $(call get-bibs,<aux file>,<targets>)
-define get-md-bibs
-$(SED)
-$(SORT) | $(UNIQ)
-endef
 
+# Outputs all bibliography files to stdout.
+# $(call get-bibs,<aux file>)
+define get-bibs
+$(shell $(SED) \
+  -e '/^\\\(bibliography\|addbibresource\){/!d' \
+  -e 's/\\addbibresource{\([^}]*\)}/\1 /' \
+  -e 's/\\bibliography{\([^}]*\)}/\1 /' \
+  -e 's/,/ /'\
+'$1' | $(SORT) | $(UNIQ) )
+endef
+#   -e 's/,/.bib /g' \
+#  -e 's/[[:space:]]/\\&/g' \
 
 USE_NPX :=$(call have-cmd,$(NPX))
 define run-npx
 $(if $(USE_NPX),$(NPX) $1,$1)
 endef
 define run-sass
-  $(if $(USE_SASS),\
+$(if $(USE_SASS),\
   $(call run-npx,$(notdir $(SASS)) $(SASS_FLAGS) $1 $2),\
   $(warning "no SASS suppot? check your installation"))
 endef
@@ -950,24 +962,23 @@ files_sources     ?= $(if $(BUILD_ONLY),\
 
 files_noext       := $(basename $(files_all))
 
-
 # MDT/TEX files
-files_mdt             := $(files_noext:$(INDIR)/%=$(MDTDIR)/%.mdt)
-files_tex             := $(files_noext:$(INDIR)/%=$(MDTDIR)/%.tex)
-files_sty             := $(wildcard $(TEMPLATEDIR)/*.sty)
-tex_sty               := $(files_sty:$(TEMPLATEDIR)/%=$(TEXDIR)/%)
+files_mdt         := $(files_noext:$(INDIR)/%=$(MDTDIR)/%.mdt)
+files_tex         := $(files_noext:$(INDIR)/%=$(MDTDIR)/%.tex)
+files_sty         := $(wildcard $(TEMPLATEDIR)/*.sty)
+tex_sty           := $(files_sty:$(TEMPLATEDIR)/%=$(TEXDIR)/%)
 
 # MDH files
-files_mdh             := $(files_noext:$(INDIR)/%=$(MDHDIR)/%.mdh)
-files_html            := $(files_noext:$(INDIR)/%=$(HTMLDIR)/%.html)
-files_epub            := $(files_noext:$(INDIR)/%=$(HTMLDIR)/%.epub)
-files_docx            := $(files_noext:$(INDIR)/%=$(HTMLDIR)/%.docx)
-files_odt             := $(files_noext:$(INDIR)/%=$(HTMLDIR)/%.odt)
+files_mdh         := $(files_noext:$(INDIR)/%=$(MDHDIR)/%.mdh)
+files_html        := $(files_noext:$(INDIR)/%=$(HTMLDIR)/%.html)
+files_epub        := $(files_noext:$(INDIR)/%=$(EPUBDIR)/%.epub)
+files_docx        := $(files_noext:$(INDIR)/%=$(DOCXDIR)/%.docx)
+files_odt         := $(files_noext:$(INDIR)/%=$(ODTDIR)/%.odt)
 
 # MDX files
-files_mdx             := $(files_noext:$(INDIR)/%=$(MDTDIR)/%.mdx)
-files_tex             := $(files_noext:$(INDIR)/%=$(TEXDIR)/%.tex)
-files_pdf             := $(files_noext:$(INDIR)/%=$(OUTDIR)/%.tex)
+files_mdx         := $(files_noext:$(INDIR)/%=$(MDTDIR)/%.mdx)
+files_tex         := $(files_noext:$(INDIR)/%=$(TEXDIR)/%.tex)
+files_pdf         := $(files_noext:$(INDIR)/%=$(PDFDIR)/%.pdf)
 
 # SCSS/CSS files
 ifdef USE_SASS
@@ -998,7 +1009,7 @@ dir_deps  += $(MDXDIR) $(XMLDIR)
 dir_deps  += $(EPUBDIR) $(DOCXDIR) $(ODTDIR)
 dir_deps  += $(MDTDIR) $(TEXDIR) $(PDFDIR)
 
-base_deps += $(METADATA) $(VARSDATA) $(PP_MACROS)
+base_deps += clean-files $(METADATA) $(VARSDATA) $(PP_MACROS)
 
 bib_deps  += $(CSL) $(BIBFILES)
 bibtex_deps+= $(BIBFILES) $(BIBFILES:$(BIBDIR)/%=$(OUT_BIBDIR)/%)
@@ -1007,7 +1018,7 @@ mdt_deps  += $(files_mdt) $(base_deps) $(PP_latex_MACROS) $(bib_deps)
 tex_deps  += $(mdt_deps) $(TEMPLATEDIR)/template.latex $(tex_sty)
 tex_deps  += $(bibtex_deps)
 #tex_deps  += $(fig_pdf)
-pdf_deps  +=
+pdf_deps  += $(base_deps)
 
 mdh_deps  += $(base_deps) $(PP_html5_MACROS) $(bib_deps)
 html_deps += $(mdh_deps)
@@ -1086,8 +1097,8 @@ watch-pdf:
 endif
 
 test:
-	$(QUIET)$(ECHO) "run-panoc" $(call run-pandoc,fpp)
-	$(QUIET)$(ECHO) "run-panoc" $(call run-pandoc,foooo.$(MDEXT))
+	$(QUIET)$(ECHO) "A $(this_file) MAKEFLAGS: $(MAKEFLAGS)"
+	$(QUIET)$(ECHO) "get bibs" $(patsubst ../%,%,$(call get-bibs,build/tex/01_article.tex))
 ################################################################################
 # MAIN TARGETS
 #
@@ -1149,12 +1160,29 @@ xml-chunk:
 
 # TeX/PDF Output target
 .PHONY: pdf
-pdf:
-	$(QUIET)$(echo_dt) "Make pdf ... has to be ruled"
+pdf:$(pdf_deps) $(files_pdf)
+
+$(PDFDIR)/%.pdf:$(TEXDIR)/%.pdf
+	$(QUIET)$(call echo-build,PDF,$@,dist)
+	$(QUIET)$(call echo-copy,$<,$@)
+	$(call replace-temporary-if-different-and-remove,$<,$@)
+	$(call echo-end-target,$@)
+
+$(TEXDIR)/%.pdf:$(call path-norm,$(TEXDIR)/%.tex)
+	$(QUIET)$(call echo-build,PDF,$@,prep)
+	$(QUIET)$(MAKE) $(addprefix $(OUTDIR)/,$(call get-md-fig,$<))
+	$(QUIET)$(MAKE) $(patsubst ../$(BIBDIR)/%,$(OUT_BIBDIR)/%,$(call get-bibs,$<))
+	$(QUIET)cd $(TEXDIR) && \
+	 $(MAKE) -f $(PWD)/$(this_file) $(REMAKE_FLAGS) \
+	 BUILD_BIB_STRATEGY='$(strip $(call get-bib-strategy,$<))' "$(notdir $@)"\
+	 && cd -
+	$(call echo-end-target,$@)
+
 
 define REMAKE_FLAGS
 ROOTDIR='$(ROOTDIR)' \
-files_sources='$(files_sources)'
+files_all='$(strip $(files_all))'\
+files_sources='$(strip $(files_sources))'
 endef
 
 tex:$(tex_deps) $(files_tex)
@@ -1186,8 +1214,8 @@ $(EGREP) '^(.*Rerun .*|No file $1\.[^.]+\.)$$' $1.log \
 | $(EGREP) -q -v '^(Package: rerunfilecheck.*Rerun checks for auxiliary files.*)$$'
 endef
 
+.PRECIOUS: %.aux %.bbl
 # Build pdf from LaTeX files:
-
 %.pdf:%.tex %.bbl %.aux
 	$(QUIET)fatal=`$(call colorize-latex-errors,$*.log)`; \
 	if [ x"$$fatal" != x"" ]; then \
@@ -1205,18 +1233,22 @@ endef
   done
 
 #biblio
-ifeq "$(strip $(TEX_BIB_STRATEGY))" "natbib"
-%.bbl:%.aux
-	$(QUIET)$(if $(filter %.bib,$^);\
-		$(call echo-build,$(filter %.bib,$?) $*.aux,$@); \
-		$(call run-bibtex,$*); \
-	  $(call echo-end-target,$@); \
-	)
-endif
+
 ifeq "$(strip $(TEX_BIB_STRATEGY))" "biblatex"
 %.bbl:%.bcf %.aux
 	$(QUIET)$(call echo-build,$<,$@); \
 	$(call run-bibtex,$<,$@,$*.bcf) ;\
+	$(call echo-end-target,$@)
+else
+#default bibtex!
+%.bbl:%.aux %.tex
+	$(QUIET)$(call echo-build,BBL? $@,$*)
+	$(call run-bibtex,$*)
+	if $(EGREP) -q 'Citation.*(undef)' $*.log ; then \
+    $(echo_dt) "$(C_INFO)Need to re-run LaTeX for citation...$(reset)";\
+		$(call echo-build,$<,$*.bbl); \
+		$(call run-latex,$*); \
+	fi
 	$(call echo-end-target,$@)
 endif
 
@@ -1238,10 +1270,11 @@ $(MDTDIR)/%.mdt:$(MDDIR)/%.md | $(MDTDIR)
 	$(QUIET)$(SED)  -e 's/}\s*\\cite{/,/g' -e 's/}\s*\\cref{/,/g'  < $@ > $@.sed
 	$(call replace-temporary-if-different-and-remove,$@.sed,$@)
 
-%.tex:%.mdt | $(TEXDIR)
+$(TEXDIR)/%.tex:$(MDTDIR)/%.mdt $(tex_deps)| $(TEXDIR)
+	$(QUIET)$(call echo-build,TeX,$@,$<)
 	$(QUIET)$(call echo-run,$(PANDOC),$@,$<)
 	$(call run-pandoc-from-md,$<,$@,latex)
-	$(call echo-end-target,$@); 
+	$(call echo-end-target,$@);
 #	$(QUIET)$(PANDOC) -f markdown$(PANDOC_MDEXT) $(PANDOC_FLAGS) \
 	 $(VARSDATA) $(PANDOC_latex_FLAGS) $<  -t latex -o $@
 
@@ -1384,10 +1417,13 @@ $(NODEDIR)/%/:
 #
 .PHONY: clean-all clean-html
 clean: clean-files clean-aux clean-bib clean-mdt clean-mdh clean-css clean-fig ;
-clean-files:
+clean-files: clean-log
 	$(QUIET)$(echo_dt) "$(C_WARNING) Cleaning unnecessary documents...$(reset)"
 	$(call clean-files,$(clean_files))
 
+clean-log:
+	$(QUIET)$(echo_dt) "$(C_WARNING) Cleaning Log intermediates...$(reset)"
+	$(call clean-files,$(clean_log))
 clean-aux:
 	$(QUIET)$(echo_dt) "$(C_WARNING) Cleaning LaTeX intermediates...$(reset)"
 	$(call clean-files,$(clean_tex_aux_files))
@@ -1396,7 +1432,7 @@ clean-bib:
 	$(call clean-files,$(clean_tex_bib_files))
 
 clean-mdt:
-	$(QUIET)$(echo_dt) "$(C_WARNING) Cleaning Markdown/Html intermediates...$(reset)"
+	$(QUIET)$(echo_dt) "$(C_WARNING) Cleaning Markdown/Tex intermediates...$(reset)"
 	$(call clean-files,$(clean_mdt_files))
 
 clean-tex: clean-aux clean-mdt

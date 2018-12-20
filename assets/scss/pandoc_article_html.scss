@@ -4,7 +4,7 @@
 }
 
 @import "variables";
-//@import "bootstrap/scss/functions";//already loaded in variables 
+//@import "bootstrap/scss/functions";//already loaded in variables
 //@import "bootstrap/scss/variables";//already loaded in variables
 //bootstrap mixins
 @import "bootstrap/scss/mixins";
@@ -21,6 +21,10 @@
 @import "bootstrap/scss/card";
 @import "bootstrap/scss/utilities/display";
 @import "bootstrap/scss/utilities/flex";
+@import "bootstrap/scss/utilities/float";
+@import "bootstrap/scss/utilities/position";
+@import "bootstrap/scss/utilities/screenreaders";
+@import "bootstrap/scss/utilities/sizing";
 @import "bootstrap/scss/utilities/spacing";
 
 //local styles

@@ -1,4 +1,15 @@
+autoSectionLabels: true
+chapters: false
+chaptersDepth: 1
+codeBlockCaptions: false
+cref: true
+ccsLabelSep: ')&nbsp;'
 eqnPrefix: [Eq., Eqns.]
+figPrefix: [Fig., Figs.]
 figureTemplate: "[[$$figureTitle$$&nbsp;$$i$$$$titleDelim$$]{.figlabel}  $$t$$]{.figcaption}"
-subfigureTemplate: "[[$$figureTitle$$&nbsp;$$i$$$$titleDelim$$]{.figlabel} $$t$$: $$ccs$$]{.figcaption}"
+figureTitle: Fig.
+linkReferences: true
+numberSections: True
 secLabels: "roman"
+subfigureTemplate: "[[$$figureTitle$$&nbsp;$$i$$$$titleDelim$$????]{.figlabel} $$t$$]{.figcaption}"
+subfigureChildTemplate: "($$i$$)"

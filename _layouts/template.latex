@@ -8,7 +8,7 @@ $endif$$endif$%
 \documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$babel-lang$,$endif$$if(papersize)$$papersize$paper,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
 
 \ifx\pdfoutput\undefined\let\pdfoutput\outputmode\fi
-\newif\ifpdf\pdftrue
+\usepackage{ifpdf}
 \ifx\pdfoutput\undefined\pdffalse\else\pdftrue\fi
 \ifpdf
   \PackageInfo{\jobname}{Compiled \jobname{} with PDF}
@@ -26,7 +26,11 @@ $if(linestretch)$
 \usepackage{setspace}
 \setstretch{$linestretch$}
 $endif$
-\usepackage{mathtools,amssymb,amsmath}
+% *** MATH PACKAGES ***
+\usepackage{amsfonts}
+\usepackage[cmex10]{amsmath} % assumes amsmath package installed
+\usepackage{mathtools,amssymb}
+\usepackage{bm}
 \usepackage{ifthen,ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
@@ -59,8 +63,6 @@ $for(fontfamilies)$
 $endfor$
 $if(mainfont)$
   \setmainfont[$for(mainfontoptions)$$mainfontoptions$$sep$,$endfor$]{$mainfont$}
-$else$
-  \setmainfont{TeX Gyre Termes}[SlantedFont =lmromanslant10-regular.otf]
 $endif$
 $if(romanfont)$
   \setromanfont[$for(mainfontoptions)$$mainfontoptions$$sep$,$endfor$]{$mainfont$}
@@ -202,8 +204,6 @@ $if(pagestyle)$
 $endif$
 $endif$
 
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
-\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
 $if(tables)$
 \usepackage{longtable,booktabs}
@@ -222,16 +222,16 @@ $if(graphics)$
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 $endif$
-% set default figure placement to htbp
-\makeatletter
-\def\fps@figure{htbp}
-\makeatother
 
 %% HEADER INCLUDES
 $for(header-includes)$
 $header-includes$
 $endfor$
 %% END HEADER INCLUDES
+
+$if(pandoc-df-article)$
+\usepackage{pandoc-df-article}
+$endif$
 
 $if(lang)$
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
@@ -262,9 +262,8 @@ $if(dir)$
 \fi
 $endif$
 
-
 $if(natbib)$
-\usepackage[$natbiboptions$]{natbib}
+\usepackage[$for(natbiboptions)$$natbiboptions$$sep$,$endfor$]{natbib}
 \bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
 $endif$
 $if(biblatex)$
@@ -273,20 +272,29 @@ $for(bibliography)$
 \addbibresource{$bibliography$}
 $endfor$
 $endif$
+
+$if(hyphenation)$
+\hyphenation{$for(hyphenation)$$hyphenation$$sep$,$endfor$}
+$else$
+\hyphenation{op-tical net-works semi-conduc-tor}
+$endif$
+
+
 \makeatletter
 \providecommand{\keywords}[1]{
 \providecommand{\and}{;}
 #1}
 \makeatother
+
 $if(title)$
-\title{$title$$if(thanks)$\thanks{$thanks$}$endif$}
+\title{$title$}
 $endif$
 
 $if(authors)$
-\author{$for(authors)$$if(authors.name)$$authors.name$$else$$authors$$endif$$sep$ \and $endfor$}
+\author{$for(authors)$$if(authors.name)$$authors.name$$else$$authors$$endif$$sep$ \and $endfor$$if(thanks)$\thanks{$thanks$}$endif$}
 $else$
 $if(author)$
-\author{$for(author)$$if(author.name)$$author.name$$else$$author$$endif$$sep$ \and $endfor$} %$if(author.affiliation)$\thanks{$author.affiliation$}$endif$
+\author{$for(author)$$if(author.name)$$author.name$$else$$author$$endif$$sep$ \and $endfor$$if(thanks)$\thanks{$thanks$}$endif$} %$if(author.affiliation)$\thanks{$author.affiliation$}$endif$
 $endif$
 $endif$
 
@@ -302,7 +310,7 @@ $abstract$
 \end{abstract}
 $endif$
 $if(keywords)$
-\keywords{$for(keywords)$$keywords$$sep$ \and $endfor$}
+\keywords{$for(keywords)$$keywords$$sep$\and $endfor$}
 $endif$
 
 $for(include-before)$
@@ -328,12 +336,13 @@ $else$
 \renewcommand\refname{$biblio-title$}
 $endif$
 $endif$
-\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+\bibliography{$for(bibliography)$$if(biblio-dir-prefix)$$biblio-dir-prefix$$endif$$bibliography$$sep$,$endfor$}
 $endif$
 $endif$
 $if(biblatex)$
 \printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
 $endif$
+
 
 $for(include-after)$
 $include-after$
